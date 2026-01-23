@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
+
+# Logs and outputs
+logs/
+outputs/
+*.log
+
+# Data (raw or generated)
+data/
+*.csv
+*.parquet
+
+# OS / editor
+.DS_Store
+.vscode/
