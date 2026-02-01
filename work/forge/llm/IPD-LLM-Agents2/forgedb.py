@@ -1,4 +1,4 @@
-import argparse, json, logging, os, psycopg
+import argparse, glob, json, logging, os, psycopg
 from psycopg.rows import dict_row
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -28,7 +28,7 @@ class ForgeDB:
         """Close the database connection."""
         self.conn.close()
 
-    def load_json(self, filepath):
+    def load_json(self, filepath, user_name='unknown'):
         """
         Import a JSON file into the database.
         
@@ -40,6 +40,9 @@ class ForgeDB:
         try:
             with open(filepath, 'r') as f:
                 data = json.load(f)
+
+                # set username for older JSON file versions
+                researcher = data.get('username', user_name)
             
             # Insert into results table, retrieve serialized results_id from insert
             with self.conn.cursor() as cur:
@@ -88,7 +91,7 @@ class ForgeDB:
                         # Session metadata
                         'timestamp':                data['timestamp'],
                         'hostname':                 data.get('hostname', None),
-                        'username':                 data.get('username', None),
+                        'username':                 researcher,
                         'elapsed_seconds':          data['elapsed_seconds'],
                         
                         # Config fields
@@ -233,8 +236,8 @@ class ForgeDB:
 
             self.conn.commit()
             logging.info(
-                f"Loaded {filepath} -> results_id={results_id}, user={data['username']}")
-            return (results_id, data['username'])
+                f"Loaded {filepath} -> results_id={results_id}, user={researcher}")
+            return (results_id, researcher)
         
         # Prevent duplicate test results from import
         except psycopg.errors.UniqueViolation as e:
@@ -249,17 +252,21 @@ class ForgeDB:
             raise
 
 
-    def load_batch(self, dirpath, pattern='*.json'):
-        """Load all JSON files from a directory."""
-        import glob
+    def _load_batch(self, source, pattern='*.json', user_name='unknown'):
+        """ Load JSON files from a directory or a list of filepaths.
+            To be used in CLI environment only.
+        """
         
-        filepaths = glob.glob(os.path.join(dirpath, pattern))
+        if isinstance(source, list):
+            filepaths = source
+        else:
+            filepaths = glob.glob(os.path.join(source, pattern))
         
         if not filepaths:
-            logging.warning(f"No files matching {pattern} in {dirpath}")
+            logging.warning(f"No files to process")
             return {'loaded': [], 'skipped': [], 'failed': []}
         
-        logging.info(f"Found {len(filepaths)} files in {dirpath}")
+        logging.info(f"Processing {len(filepaths)} files")
         
         results = {
             'loaded': [],
@@ -269,7 +276,7 @@ class ForgeDB:
         
         for filepath in sorted(filepaths):
             try:
-                result = self.load_json(filepath)
+                result = self.load_json(filepath, user_name)
                 
                 if result is not None:
                     results['loaded'].append((filepath, result[0], result[1]))
@@ -284,44 +291,50 @@ class ForgeDB:
                     f"{len(results['failed'])} failed")
         
         return results
+    
+    def _get_files(self, path, user_name='unknown'):
+        """ Load a file, directory, or glob pattern.
+            To be used in CLI environment only.
+        """
+        
+        if os.path.isfile(path):
+            return self.load_json(path, user_name)
+        
+        elif os.path.isdir(path):
+            return self._load_batch(path, user_name=user_name)
+        
+        elif '*' in path or '?' in path:
+            dirpath = os.path.dirname(path) or '.'
+            pattern = os.path.basename(path)
+            return self._load_batch(dirpath, pattern, user_name)
+        
+        else:
+            logging.error(f"Path not found: {path}")
+            return None    
 
 
 if __name__ == '__main__':
 
-    """
-    file_path = os.path.join(script_dir, 'results', 'episodic_game_20260126_172659.json')
-
-    print(f"Current directory is {os.getcwd()}")
-    print(f"Script Directory is {script_dir}")
-    print(f"File to import: {file_path}")
-
-    db = ForgeDB()
-    print(f"Connected to: {db.conn.info.dbname}")
-    print(f"User: {db.conn.info.user}")
-    print(f"Host: {db.conn.info.host}")
-
-    results_id = db.load_json(file_path)
-    print(f"Loaded as resutls_id: {results_id}")
-    db.close()
-    """
-
     parser = argparse.ArgumentParser(description='Load IPD game data into PostgreSQL')
-    parser.add_argument('path', help='File or directory to load')
-    parser.add_argument('--pattern', default='*.json', help='File pattern (default: *.json)')
+    parser.add_argument('--import', dest='import_path', nargs='*', help='File(s), directory, or pattern to load')
+    parser.add_argument('--username', dest='user_name', default='unknown', help='Default username for older files missing username field')
     
     args = parser.parse_args()
     
-    db = ForgeDB()
-    
-    if os.path.isfile(args.path):
-        results_id = db.load_json(args.path)
-        print(f"Loaded: results_id {results_id}")
-    elif os.path.isdir(args.path):
-        results = db.load_batch(args.path, args.pattern)
-        print(f"Loaded: {len(results['loaded'])}, Skipped: {len(results['skipped'])}, Failed: {len(results['failed'])}")
+    if args.import_path:
+        db = ForgeDB()
+        
+        if len(args.import_path) == 1:
+            result = db._get_files(args.import_path[0], args.user_name)
+            
+            if isinstance(result, tuple):
+                print(f"Loaded: results_id {result[0]}, user {result[1]}")
+            elif isinstance(result, dict):
+                print(f"Loaded: {len(result['loaded'])}, Skipped: {len(result['skipped'])}, Failed: {len(result['failed'])}")
+        else:
+            results = db._load_batch(args.import_path, user_name=args.user_name)
+            print(f"Loaded: {len(results['loaded'])}, Skipped: {len(results['skipped'])}, Failed: {len(results['failed'])}")
+        
+        db.close()
     else:
-        print(f"Path not found: {args.path}")
-    
-    db.close()
-
-
+        parser.print_help()
