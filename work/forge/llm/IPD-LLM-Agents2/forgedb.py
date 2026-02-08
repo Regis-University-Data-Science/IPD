@@ -1,3 +1,17 @@
+"""
+    FORGE Database ETL
+    ETL Pipeline for Iterated Prisoner's Dilemma with LLM Agents
+
+    Practicum I - MSDS 692/S41: Data Science Practicum I
+
+    Emily D. Carpenter
+    Anderson College of Business and Computing, Regis University
+
+    Advisors: Dr. Douglas Hart, Dr. Kellen Sorauf
+
+    February 2026
+"""
+
 import argparse
 import glob
 import json
@@ -10,7 +24,7 @@ from psycopg.rows import dict_row
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Set up logging (at top of file, after imports)
+# Set up logging
 logging.basicConfig(
     filename=os.path.join(script_dir, 'forgedb.log'),
     level=logging.INFO,
@@ -31,24 +45,104 @@ class ForgeDB:
             row_factory=dict_row
         )
     
+    def close(self):
+        """Close the database connection."""
+        self.conn.close()
+
+    # ==========================================================================
+    # Methods for querying the database
+    # ==========================================================================
     def query(self, sql, params=None):
         with self.conn.cursor() as cur:
             cur.execute(sql, params)
             return cur.fetchall()
-
-    def get_results(self, start_date=None, end_date=None, username=None, limit=None):
+        
+    def get_results(self, start_date=None, end_date=None, username=None, filename=None, limit=None ):
         """
-        Query Iterative Prisoner's Dillema (IPD) game results and return as a pandas DataFrame.
+        Query Iterative Prisoner's Dilemma (IPD) game results and return as a pandas DataFrame.
+
+        This query returns all data for a given experiment with each row representing
+        a single round of IPD data per agent. 
+        
+        **Note:** Columns will contain duplicate data and require grouping for data analysis.
         
         Parameters:
             start_date: Filter results on or after this date (string or datetime)
             end_date:   Filter results on or before this date (string or datetime)
-            username:   Filter by username
+            username:   Filter by username (full or partial, % is wildcard char, case insensitive)
+            filename:   Filter by name of the results JSON file (full or partial, 
+                            % is wildcard, case insensitive)
             limit:      Maximum rows to return
-        """
 
+        Example Usage:
+            db.get_results(username='dhart')
+            db.get_results(username='dhart', filename='%ep50%') # get all filenames with ep50
+            db.get_results(
+                username='dhart',
+                filename='%ep50%',
+                start_date='2026-01-25',
+                end_date='2026-01-26 17:00:00')
+        """
+        return self._query_view('results_vw', start_date=start_date, end_date=end_date, 
+            username=username, filename=filename, limit=limit)
+
+    def get_summary(self, start_date=None, end_date=None, username=None, filename=None, limit=None ):
+        """
+        Query Iterative Prisoner's Dilemma (IPD) game results and return as a pandas DataFrame.
+
+        This query returns summary data for a given experiment with each row containing distinct
+        data. Agent data has been pivoted to columns for ease of data analysis.
+
+        Parameters:
+            start_date: Filter results on or after this date (string or datetime)
+            end_date:   Filter results on or before this date (string or datetime)
+            username:   Filter by username (full or partial, % is wildcard char, case insensitive)
+            filename:   Filter by name of the results JSON file (full or partial, 
+                            % is wildcard, case insensitive)
+            limit:      Maximum rows to return
+
+        Example Usage:
+            db.get_results(username='dhart')
+            db.get_results(username='dhart', filename='%ep50%') # get all filenames with ep50
+            db.get_results(
+                username='dhart',
+                filename='%ep50%',
+                start_date='2026-01-25',
+                end_date='2026-01-26 17:00:00')
+        """
+        return self._query_view('session_summary_vw', start_date=start_date, end_date=end_date, 
+            username=username, filename=filename, limit=limit)
+
+    def get_rounds(self, start_date=None, end_date=None, username=None, filename=None, limit=None ):
+        """
+        Query Iterative Prisoner's Dilemma (IPD) game results and return as a pandas DataFrame.
+
+        This query returns detailed data on each agent per rounds.
+        **Note:** Columns will contain duplicate data and require grouping for data analysis.
+
+        Parameters:
+            start_date: Filter results on or after this date (string or datetime)
+            end_date:   Filter results on or before this date (string or datetime)
+            username:   Filter by username (full or partial, % is wildcard char, case insensitive)
+            filename:   Filter by name of the results JSON file (full or partial, 
+                            % is wildcard, case insensitive)
+            limit:      Maximum rows to return
+
+        Example Usage:
+            db.get_results(username='dhart')
+            db.get_results(username='dhart', filename='%ep50%') # get all filenames with ep50
+            db.get_results(
+                username='dhart',
+                filename='%ep50%',
+                start_date='2026-01-25',
+                end_date='2026-01-26 17:00:00')
+        """
+        return self._query_view('rounds_detail_vw', start_date=start_date, end_date=end_date, 
+            username=username, filename=filename, limit=limit)
+
+    def _query_view(self, view_name, start_date=None, end_date=None, username=None, filename=None, limit=None):
         try:
-            sql = "SELECT * FROM ipd2.results_vw WHERE 1=1"
+            sql = f"SELECT * FROM ipd2.{view_name} WHERE 1=1"
             params = {}
             
             if start_date is not None:
@@ -56,15 +150,17 @@ class ForgeDB:
                 params['start_date'] = start_date
             
             if end_date is not None:
-                sql += " AND timestamp <= %(end_date)s"
+                sql += " AND timestamp < %(end_date)s"
                 params['end_date'] = end_date
             
             if username is not None:
-                sql += " AND username = %(username)s"
+                sql += " AND LOWER(username) LIKE LOWER(%(username)s)"
                 params['username'] = username
-            
-            sql += " ORDER BY timestamp, agent_idx, episode, round"
-            
+
+            if filename is not None:
+                sql += " AND LOWER(filename) LIKE LOWER(%(filename)s)"
+                params['filename'] = filename
+                        
             if limit is not None:
                 sql += f" LIMIT {limit}"
             
@@ -79,12 +175,9 @@ class ForgeDB:
             logging.error(f"get_results failed - {e}")
             raise
 
-    def close(self):
-        """Close the database connection."""
-        self.conn.close()
-
-##### Remaining methods are used at the CLI for importing files into the DB #####
-
+    # ==========================================================================
+    # Methods for importing results JSON files into the database
+    # ==========================================================================
     def load_json(self, filepath, user_name='unknown'):
         """
         Import a JSON file into the database.
@@ -98,14 +191,18 @@ class ForgeDB:
             with open(filepath, 'r') as f:
                 data = json.load(f)
 
-                # set username for older JSON file versions
+                # Capture the results filename
+                filename = os.path.basename(filepath)
+
+                # Set username for older JSON file versions
                 researcher = data.get('username', user_name)
             
             # Insert into results table, retrieve serialized results_id from insert
             with self.conn.cursor() as cur:
                 cur.execute("""
                     INSERT INTO ipd2.results (
-                        timestamp
+                        filename
+                        ,timestamp
                         ,hostname
                         ,username
                         ,elapsed_seconds
@@ -124,7 +221,8 @@ class ForgeDB:
                         ,reflection_template
                         ,raw_json
                     ) VALUES (
-                        %(timestamp)s
+                        %(filename)s
+                        ,%(timestamp)s
                         ,%(hostname)s
                         ,%(username)s
                         ,%(elapsed_seconds)s
@@ -146,6 +244,7 @@ class ForgeDB:
                     """, 
                     {
                         # Session metadata
+                        'filename':                 filename,
                         'timestamp':                data['timestamp'],
                         'hostname':                 data.get('hostname', None),
                         'username':                 researcher,
@@ -349,7 +448,7 @@ class ForgeDB:
         
         return results
     
-    def _get_files(self, path, user_name='unknown'):
+    def get_files(self, path, user_name='unknown'):
         """ Load a file, directory, or glob pattern.
             To be used in CLI environment only.
         """
@@ -381,7 +480,7 @@ if __name__ == '__main__':
         db = ForgeDB()
         
         if len(args.import_path) == 1:
-            result = db._get_files(args.import_path[0], args.user_name)
+            result = db.get_files(args.import_path[0], args.user_name)
             
             if isinstance(result, tuple):
                 print(f"Loaded: results_id {result[0]}, user {result[1]}")

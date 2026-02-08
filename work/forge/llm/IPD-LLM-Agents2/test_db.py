@@ -5,10 +5,27 @@ from forgedb import ForgeDB
 
 db = ForgeDB()
 
-# Test basic query
+# Test Results query
 df = db.get_results(limit=10)
+print("Results data")
 print(f"Rows returned: {len(df)}")
 print(df.head())
+print()
+
+# Test Summary query
+df = db.get_summary(limit=10)
+print("Summary data")
+print(f"Rows returned: {len(df)}")
+print(df.head())
+print()
+
+# Test Rounds query
+df = db.get_rounds(limit=10)
+print("Summary data")
+print(f"Rows returned: {len(df)}")
+print(df.head())
+print()
+
 
 # Test with filter
 df = db.get_results(username='techkgirl', limit=50)
