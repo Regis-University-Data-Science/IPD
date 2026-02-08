@@ -9,6 +9,7 @@ venv/
 # Logs and outputs
 logs/
 outputs/
+results/
 *.log
 
 # Data (raw or generated)
