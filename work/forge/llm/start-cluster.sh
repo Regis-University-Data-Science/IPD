@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: Robust cluster startup using API-based model loading with proper keep-alive
 
-HOSTS=("nickel" "zinc" "copper" "iron" "platinum")
+HOSTS=("nickel" "zinc" "copper" "iron" "platinum" "tungsten")
 MODEL_CONFIG_FILE="$HOME/work/forge/llm/load-model.sh"
 
 echo "=== LLM CLUSTER STARTUP: API-BASED MODEL LOADING ==="

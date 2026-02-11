@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: Checks service status, loaded models, and VRAM usage on all cluster machines.
 
-HOSTS=("nickel" "zinc" "copper" "iron" "platinum")
+HOSTS=("nickel" "zinc" "copper" "iron" "platinum" "tungsten")
 
 echo "=== LLM Cluster Health and VRAM Status Check ==="
 echo "------------------------------------------------"

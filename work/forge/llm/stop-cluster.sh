@@ -1,7 +1,7 @@
 #!/bin/bash
 # Description: Stops the LLM model and API service cleanly on all cluster servers.
 
-HOSTS=("nickel" "zinc" "copper" "iron" "platinum")
+HOSTS=("nickel" "zinc" "copper" "iron" "platinum" "tungsten")
 
 echo "=== Initiating Graceful LLM Cluster Shutdown ==="
 echo " "
