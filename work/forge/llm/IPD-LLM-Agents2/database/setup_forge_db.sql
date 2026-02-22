@@ -83,6 +83,16 @@ CREATE TABLE ipd2.rounds (
         REFERENCES ipd2.episodes(episode_id) ON DELETE CASCADE
 );
 
+CREATE TABLE ipd2.research_log (
+  log_id                    SERIAL PRIMARY KEY
+  ,create_dttm              TIMESTAMPTZ
+  ,log_dttm                 TIMESTAMPTZ
+  ,username                 VARCHAR(64)
+  ,subject                  VARCHAR(256)
+  ,remarks                  TEXT
+  ,tags                     TEXT[]
+);
+
 /******************************** Grant Access ********************************/
 GRANT USAGE ON SCHEMA ipd2 
   TO techkgirl, dhart, ksorauf, priyankasaha205, theandyman;

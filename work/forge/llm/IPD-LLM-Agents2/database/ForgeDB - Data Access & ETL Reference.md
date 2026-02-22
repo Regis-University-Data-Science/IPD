@@ -1,7 +1,7 @@
 # ForgeDB - Data Access & ETL Reference
 ## Persistent Storage for Iterated Prisoner's Dilemma with LLM Agents
 
-**Version:** 1.0  
+**Version:** 1.1 (February 22, 2026)  
 **Author:** Emily D. Carpenter, Anderson College of Business and Computing, Regis University  
 **Project:** GENESIS - General Emergent Norms, Ethics, and Societies in Silico  
 **Advisors:** Dr. Douglas Hart, Dr. Kellen Sorauf
@@ -355,6 +355,127 @@ WHERE timestamp >= '2026-01-27' AND timestamp < '2026-01-28';
 
 ---
 
+## Part 4: Research Log
+
+The research log provides a simple way to document observations, meeting notes, and project activities. Entries are stored in `ipd2.research_log` and are independent of experiment data (i.e. deletions do not affect other tables within the database).
+
+### Add a Log Entry
+```python
+from forgedb import ForgeDB
+
+db = ForgeDB()
+
+# Minimal entry (remarks required, defaults applied)
+db.add_log(remarks='Observed cooperation spike in episode 7')
+
+# Entry with select parameters (remarks, subject, log date/time, and tags)
+db.add_log(
+    remarks='Breakthrough! Cooperation emerged spontaneously after round 12 without any prior coordination. Both agents shifted from mixed strategies to sustained mutual cooperation for the remaining 38 rounds. This occurred with temperature=0.7 and reflection_type=standard. Need to replicate.',
+    subject='Discovery',
+    log_dttm='2026-02-18 09:45:00',
+    tags=['cooperation', 'emergence', 'breakthrough', 'llama3', 'replicate']
+)
+
+# Full entry with all parameters
+db.add_log(
+    remarks='Initial baseline test completed successfully',
+    username='dhart',
+    subject='Experiment',
+    log_dttm='2026-02-15',
+    tags=['llama3', 'baseline', 'cooperation']
+)
+
+db.close()
+```
+
+**Parameters:**
+
+| Parameter | Required | Default | Description |
+|-----------|----------|---------|-------------|
+| `remarks` | Yes | — | Detailed notes |
+| `username` | No | Current OS user | Researcher name |
+| `subject` | No | `'General'` | Brief description |
+| `log_dttm` | No | Current timestamp | Effective date/time |
+| `tags` | No | `None` | Single tag or Array of tags, e.g. `['llama3', 'test']` |
+
+---
+
+### Query Log Entries
+```python
+# All entries
+df = db.get_log()
+
+# Filter by username
+df = db.get_log(username='dhart')
+
+# Filter by subject (wildcard %)
+df = db.get_log(subject='%Experiment%')
+
+# Search remarks
+df = db.get_log(remarks='%cooperation%')
+
+# Filter by single tag
+df = db.get_log(tags='llama3')
+
+# Filter by multiple tags (ALL tags must be present on the log entry)
+df = db.get_log(tags=['llama3', 'cooperation'])
+
+# Filter by date range
+df = db.get_log(start_date='2026-02-01', end_date='2026-02-15')
+
+# Filter by date range with specific time
+df = db.get_log(start_date='2026-02-15 08:00:00', end_date='2026-02-15 17:00:00')
+
+# Combine filters
+df = db.get_log(username='dhart', tags='experiment', limit=10)
+```
+
+**Parameters (all optional, wildcard=%):**
+
+| Parameter | Description |
+|-----------|-------------|
+| `username` | Filter by researcher |
+| `subject` | Filter by subject |
+| `remarks` | Search within remarks text |
+| `tags` | Single tag or list of tags (matches ALL if list) |
+| `start_date` | Filter on/after this date/time |
+| `end_date` | Filter before this date/time |
+| `limit` | Maximum rows to return |
+
+---
+
+### Delete Log Entries
+```python
+# Delete a single log entry using a log entry ID number
+db.delete_log(5)
+
+# Delete multiple log entries using a list of IDs
+db.delete_log([1, 3, 5])
+
+# Delete a range of log entries using a tuple of ID start and end values (inclusive)
+db.delete_log((1, 10))  # Deletes IDs 1 through 10
+```
+
+**Note:** Use a tuple `(start, end)` for a range. Use a list `[1, 3, 5]` for specific non-contiguous IDs.
+
+---
+
+### Research Log Table Structure
+
+**Table:** `ipd2.research_log`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `log_id` | `SERIAL` | Primary key (auto-generated) |
+| `create_dttm` | `TIMESTAMPTZ` | When the entry was created |
+| `log_dttm` | `TIMESTAMPTZ` | Effective date (what the note refers to) |
+| `username` | `VARCHAR(64)` | Researcher who created the entry |
+| `subject` | `VARCHAR(256)` | Brief description/category |
+| `remarks` | `TEXT` | Detailed notes |
+| `tags` | `TEXT[]` | Array of tags for filtering |
+
+---
+
 ## Quick Reference Card
 
 ```python
@@ -384,6 +505,13 @@ df = pd.DataFrame(rows)
 # CLI import
 # python forgedb.py --import results/
 # python forgedb.py --import results/game.json --username dhart
+
+# Research log methods
+db.add_log(remarks='Note text', subject='Topic', tags=['tag1', 'tag2'])
+db.get_log(username='dhart', tags='experiment')
+db.delete_log(5)           # Single ID
+db.delete_log([1, 3, 5])   # List of IDs
+db.delete_log((1, 10))     # Range (inclusive)
 
 db.close()
 ```
@@ -444,3 +572,15 @@ Carpenter, E. D. (2026, January-May). ForgeDB: Data access & ETL pipeline for
 ## Acknowledgments
 
 Database schema, ETL pipeline, and documentation developed with assistance from Claude (Anthropic; models used include Sonnet 4.5 and Opus 4.6). All code and content reviewed, edited, and approved by the author.
+
+---
+
+## Changelog
+
+### Version 1.1 (February 22, 2026)
+- Added research log functionality (add_log, get_log, delete_log)
+- Added ON DELETE CASCADE to all foreign keys
+- Created ipd2.research_log table
+
+### Version 1.0 (February 2026)
+- Initial release with ETL pipeline and query methods

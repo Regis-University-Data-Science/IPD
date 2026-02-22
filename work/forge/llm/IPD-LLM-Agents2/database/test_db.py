@@ -1,4 +1,8 @@
-import pandas as pd
+import pandas as pd, os, sys
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(script_dir)
+sys.path.append(parent_dir)
 
 # test_forgedb.py
 from forgedb import ForgeDB
