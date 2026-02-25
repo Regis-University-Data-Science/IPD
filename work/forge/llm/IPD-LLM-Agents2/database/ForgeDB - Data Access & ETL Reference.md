@@ -575,6 +575,84 @@ Database schema, ETL pipeline, and documentation developed with assistance from 
 
 ---
 
+## Appendix: Database Configuration
+
+PostgreSQL was installed on the `platinum` host and configured for cluster-wide access. The following steps were performed once during initial setup.
+
+### Installation
+```bash
+sudo apt install postgresql
+```
+
+PostgreSQL starts automatically as a service after installation.
+
+### Database and Role Creation
+Each person participating in the research is granted SUDO access on the cluster. Similarly, each person is granted full access to the PostgreSQL database program and the forge database created for this project.
+
+The next command is executed in the Linux shell to launch the PostgreSQL interactive terminal (or client).
+```bash
+# Connect as the postgres superuser
+sudo -u postgres psql
+```
+
+PostgreSQL uses **peer authentication** by default — the Linux username is matched to the PostgreSQL role, so no passwords are required for local connections. The next set of commands creates roles for each researcher in the program.
+
+```sql
+# Create roles matching Linux usernames for each researcher (peer authentication)
+CREATE ROLE techkgirl WITH LOGIN CREATEDB;
+CREATE ROLE ksorauf WITH LOGIN CREATEDB;
+CREATE ROLE priyankasaha205 WITH LOGIN CREATEDB;
+CREATE ROLE dhart WITH LOGIN CREATEDB;
+CREATE ROLE theandyman WITH LOGIN CREATEDB;
+```
+
+Now we create the database and grant appropriate access to each researcher.
+
+```sql
+# Create the forge database
+CREATE DATABASE forge;
+
+# Grant database access to all researchers
+GRANT ALL ON DATABASE forge TO
+    techkgirl, dhart, ksorauf, priyankasaha205, theandyman;
+```
+
+
+### Remote Access Configuration
+
+By default, PostgreSQL only listens on `localhost`. To allow connections from other machines on the cluster, two files were modified:
+
+**postgresql.conf** (located at `/etc/postgresql/<version>/main/postgresql.conf`):
+```bash
+listen_addresses = '*'
+```
+
+**pg_hba.conf** (same directory):
+```bash
+host    all    all    100.77.78.99/32     trust    # nickel
+host    all    all    100.99.205.32/32    trust    # copper
+host    all    all    100.69.179.75/32    trust    # zinc
+host    all    all    100.120.197.126/32  trust    # iron
+host    all    all    100.116.129.84/32   trust    # platinum
+host    all    all    100.110.101.75/32   trust    # tungsten
+```
+
+This allows passwordless connections from each of the cluster's machine that is connected through the Tailscale network. The `trust` method was chosen because the network is isolated to the research cluster.
+
+After modifying both configuration files, the application is restarted:
+```bash
+sudo systemctl restart postgresql
+```
+
+### Schema Setup
+
+The `ipd2` schema and all tables, views, and grants were created in the `setup_forge_db.sql` SQL script file. This file was executed at the Linux shell to create the various database objects within the application:  
+```bash
+psql -h platinum -d forge -f setup_forge_db.sql
+```
+
+Refer to the `database/setup_forge_db.sql` script file within the GitHub repository for the complete schema definition. Table relationships are visualized in the `database\ipd_db_schema_erd.pdf` Entity Relationship Diagram file.  
+
 ## Changelog
 
 ### Version 1.1 (February 22, 2026)
