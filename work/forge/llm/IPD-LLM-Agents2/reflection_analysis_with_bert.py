@@ -136,18 +136,15 @@ def calculate_moral_sophistication(reflection_text):
         'all_similarities': similarities
     }
 
-def analyze_game_file(filepath):
+def analyze_game_file(filepath, game_id=None):
     """Analyze all reflections in a game file with optimized batching"""
     data = load_json_file(filepath)
     config = extract_config(data)
     window = config['window']
     
-    # Get temperature from config
     temperature = data.get('config', {}).get('temperature', 1.0)
-
     prompt_type = get_prompt_type(filepath)
     
-    # Extract all reflections and metadata
     all_reflections = []
     reflection_info = []
     
@@ -167,7 +164,6 @@ def analyze_game_file(filepath):
     
     print(f"  Processing {len(all_reflections)} reflections...")
     
-    # Process all reflections
     all_classifications = []
     all_sophistications = []
     all_sentiments = []
@@ -179,7 +175,6 @@ def analyze_game_file(filepath):
         all_sentiments.append(bert_sentiment_score(refl))
         all_moral_densities.append(bert_moral_density(refl))
     
-    # Organize results by episode
     results = []
     episode_metrics = []
     episodes_dict = {}
@@ -205,7 +200,6 @@ def analyze_game_file(filepath):
             'moral_density': all_moral_densities[idx]
         })
     
-    # Convert to output format
     for ep_num in sorted(episodes_dict.keys()):
         ep = episodes_dict[ep_num]
         ep_data = ep['data']
@@ -216,12 +210,13 @@ def analyze_game_file(filepath):
         for agent_data in [agent_0_data, agent_1_data]:
             moral_cat = agent_data['classification']['top_category']
             results.append({
+                'game_id': game_id,          # <-- added
                 'window': window,
                 'episode': ep_num,
                 'agent': agent_data['agent'],
                 'reflection': agent_data['reflection'],
                 'moral_category': moral_cat,
-                'moral_valence': get_moral_valence(moral_cat),  # Add positive/negative
+                'moral_valence': get_moral_valence(moral_cat),
                 'category_confidence': agent_data['classification']['confidence'],
                 'sophistication_level': agent_data['sophistication']['sophistication_level'],
                 'sophistication_confidence': agent_data['sophistication']['confidence'],
@@ -230,6 +225,7 @@ def analyze_game_file(filepath):
             })
         
         episode_metrics.append({
+            'game_id': game_id,              # <-- added
             'episode': ep_num,
             'window': window,
             'temperature': temperature,
@@ -250,7 +246,6 @@ def analyze_game_file(filepath):
         })
     
     return results, episode_metrics
-
 
 def create_subplot_grid(n_items, cols=3):
     """Helper to create consistent subplot grids"""
@@ -289,8 +284,10 @@ def plot_moral_valence_trajectory(all_results, data_by_window, output_file):
         
         for ep in episodes:
             # Agent 0
+            game_id = game[0]['game_id']  # get the game_id from episode_metrics
             ep_results_0 = [r for r in all_results 
-                          if r['window']==window and r['episode']==ep and r['agent']=='agent_0']
+                        if r['game_id']==game_id and r['window']==window 
+                        and r['episode']==ep and r['agent']=='agent_0']
             if ep_results_0:
                 pos_count = sum(1 for r in ep_results_0 if r['moral_valence'] == 'positive')
                 pos_pct_0.append((pos_count / len(ep_results_0)) * 100)
@@ -494,7 +491,6 @@ def plot_moral_category_trajectory(all_results, data_by_window, output_dir):
     
     all_categories = sorted(set(r['moral_category'] for r in all_results))
     rows, cols = create_subplot_grid(len(all_categories))
-    
     fig, axes = plt.subplots(rows, cols, figsize=(7 * cols, 5 * rows), facecolor='white')
     axes = np.array(axes).reshape(-1)
     
@@ -514,9 +510,10 @@ def plot_moral_category_trajectory(all_results, data_by_window, output_dir):
                 episodes = [ep['episode'] for ep in game]
                 
                 # Moral category percentages
+                game_id = game[0]['game_id']
                 pcts0 = [sum(1 for r in all_results 
-                           if r['window']==window and r['episode']==ep 
-                           and r['agent']=='agent_0' and r['moral_category']==category) * 100
+                        if r['game_id']==game_id and r['window']==window and r['episode']==ep 
+                        and r['agent']=='agent_0' and r['moral_category']==category) * 100
                         for ep in episodes]
                 pcts1 = [sum(1 for r in all_results 
                            if r['window']==window and r['episode']==ep 
@@ -603,8 +600,13 @@ def save_statistics(all_results, data_by_window, output_dir):
                 temp = game[0].get('temperature')
 
                 episode_nums = [ep['episode'] for ep in game]
+
+                game_id = game[0]['game_id']
+
                 game_reflections = [r for r in all_results 
-                                  if r['window'] == window and r['episode'] in episode_nums]
+                                if r['game_id'] == game_id 
+                                and r['window'] == window 
+                                and r['episode'] in episode_nums]
                 
                 agent_0_refl = [r for r in game_reflections if r['agent'] == 'agent_0']
                 agent_1_refl = [r for r in game_reflections if r['agent'] == 'agent_1']
@@ -724,7 +726,6 @@ def add_bert_sentiment_to_games(json_files, output_dir=None):
     """
     Calculate BERT sentiment for existing game files and optionally save updated versions.
     Can be imported and used by other scripts without loading models twice.
-    
     Args:
         json_files: List of JSON file paths
         output_dir: Optional directory to save updated JSON files with sentiment data
@@ -821,11 +822,9 @@ def main():
     args = parser.parse_args()
     
     try:
-        # Load game files using shared function
         files = load_game_files(args.results_dir)
         print(f"Found {len(files)} game files")
         print("Analyzing reflections with BERT...\n")
-        # Create output directory using shared function
         output_dir = create_output_directory(args.output_dir)
         all_results = []
         data_by_window = defaultdict(list)
@@ -834,7 +833,7 @@ def main():
             print_progress(i, len(files), "Processing files")
             
             try:
-                file_results, episode_metrics = analyze_game_file(filepath)
+                file_results, episode_metrics = analyze_game_file(filepath, game_id=i)  # <-- pass game_id
                 all_results.extend(file_results)
                 
                 if episode_metrics:
@@ -853,11 +852,9 @@ def main():
             print("No reflections to analyze")
             return
         
-        # Save statistics and create bar charts
         print("\nGenerating statistics and charts...")
         save_statistics(all_results, data_by_window, output_dir)
         
-        # Generate visualization plots
         if data_by_window and HAS_MATPLOTLIB:
             print("Generating visualization plots...")
             
