@@ -1,7 +1,7 @@
 # ForgeDB - Data Access & ETL Reference
 ## Persistent Storage for Iterated Prisoner's Dilemma with LLM Agents
 
-**Version:** 1.1 (February 22, 2026)  
+**Version:** 2.0 (March 16, 2026)  
 **Author:** Emily D. Carpenter, Anderson College of Business and Computing, Regis University  
 **Project:** GENESIS - General Emergent Norms, Ethics, and Societies in Silico  
 **Advisors:** Dr. Douglas Hart, Dr. Kellen Sorauf
@@ -127,6 +127,7 @@ All query methods return a **pandas DataFrame** and accept the same optional fil
 | `end_date` | `str` or `datetime` | Results before this date |
 | `username` | `str` | Filter by username (case insensitive, wildcard is `%` sign) |
 | `filename` | `str` | Filter by result filename (case insensitive, wildcard is `%` sign) |
+| `comment` | `str` | Filter by comment (case insensitive, wildcard is `%` sign) |
 | `limit` | `int` | Maximum rows to return |
 
 ---
@@ -137,7 +138,7 @@ Returns experiment metadata with the original raw JSON. Useful for inspecting th
 
 **SQL view:** `ipd2.raw_data_vw`  
 
-**Columns:** `results_id`, `username`, `filename`, `timestamp`, `raw_json`
+**Columns:** `results_id`, `username`, `filename`, `comment`, `timestamp`, `raw_json`
 
 ```python
 df = db.get_raw_data(username='dhart')
@@ -170,7 +171,7 @@ Returns one row per experiment with agent data pivoted to columns. Best for comp
 
 **SQL view:** `ipd2.experiment_summary_vw`  
 
-**Columns:** `results_id`, `username`, `filename`, `timestamp`, `hostname`, `elapsed_time`, `agent_#_host`, `agent_#_model`, `agent_#_total_score`, `agent_#_total_cooperations`, `agent_0_cooperation_rate`, **all** config fields, `system_prompt`, and `reflection_template`.
+**Columns:** `results_id`, `username`, `filename`, `comment`, `timestamp`, `hostname`, `elapsed_time`, `agent_#_host`, `agent_#_model`, `agent_#_total_score`, `agent_#_total_cooperations`, `agent_0_cooperation_rate`, **all** config fields, `system_prompt`, and `reflection_template`.
 
 ```python
 df = db.get_summary()
@@ -186,7 +187,7 @@ Returns one row per episode with agent data pivoted to columns. Useful for track
 
 **SQL view:** `ipd2.episode_summary_vw`  
 
-**Columns:** `results_id`, `username`, `filename`, `timestamp`, `episode`, `agent_#_total_score`, `agent_#_total_cooperations`, `agent_#_coop_rate`, `agent_#_reflection`.
+**Columns:** `results_id`, `username`, `filename`, `comment`, `timestamp`, `episode`, `agent_#_total_score`, `agent_#_total_cooperations`, `agent_#_coop_rate`, `agent_#_reflection`.
 
 ```python
 df = db.get_episode_summary(username='dhart', filename='%ep50%')
@@ -199,7 +200,7 @@ Returns one row per round with both agents' data side-by-side (i.e. pivoted from
 
 **SQL view:** `ipd2.rounds_summary_vw`  
 
-**Columns:** `results_id`, `username`, `filename`, `timestamp`, `episode`, `round`, `agent_#_episode_id`, `agent_#_action`, `agent_#_payoff`, `agent_#_ep_cumulative_score`, `agent_#_reasoning`.
+**Columns:** `results_id`, `username`, `filename`, `comment`, `timestamp`, `episode`, `round`, `agent_#_episode_id`, `agent_#_action`, `agent_#_payoff`, `agent_#_ep_cumulative_score`, `agent_#_reasoning`.
 
 ```python
 df = db.get_rounds_summary(
@@ -216,7 +217,7 @@ Returns one row per round per agent (unpivoted). Similar to `get_results()` but 
 
 **SQL view:** `ipd2.rounds_detail_vw`  
 
-**Columns:** `results_id`, `username`, `filename`, `timestamp`, `episode_id`, `agent_idx`, `episode`, `round`, `agent`, `action`, `payoff`, `ep_cumulative_score`, `reasoning`, `ep_score`, `ep_cooperations`, `ep_coop_rate`, `ep_reflection`.
+**Columns:** `results_id`, `username`, `filename`, `comment`, `timestamp`, `episode_id`, `agent_idx`, `episode`, `round`, `agent`, `action`, `payoff`, `ep_cumulative_score`, `reasoning`, `ep_score`, `ep_cooperations`, `ep_coop_rate`, `ep_reflection`.
 
 ```python
 df = db.get_rounds_detail(limit=100)
@@ -252,6 +253,9 @@ df = db.get_episode_summary(
 
 # Limit rows (useful for testing)
 df = db.get_results(limit=10)
+
+# Filter by comment
+df = db.get_summary(comment='%baseline%')
 ```
 ---
 
@@ -495,6 +499,7 @@ db.get_rounds_detail()          # Round detail (per agent row)
 # Common filters (all methods accept these)
 db.get_summary(username='dhart')
 db.get_summary(filename='%ep50%')
+db.get_summary(comment='%test%')
 db.get_summary(start_date='2026-01-25', end_date='2026-02-01')
 db.get_summary(limit=10)
 
@@ -654,6 +659,9 @@ psql -h platinum -d forge -f setup_forge_db.sql
 Refer to the `database/setup_forge_db.sql` script file within the GitHub repository for the complete schema definition. Table relationships are visualized in the `database\ipd_db_schema_erd.pdf` Entity Relationship Diagram file.  
 
 ## Changelog
+
+### Version 2.0 (March 16, 2026)
+- Updated database and code for new field "comment" on ipd2.results
 
 ### Version 1.1 (February 22, 2026)
 - Added research log functionality (add_log, get_log, delete_log)

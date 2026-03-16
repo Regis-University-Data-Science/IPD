@@ -58,6 +58,12 @@ print(f"\nFiltered by username: {len(df)} rows")
 print(df.head())
 print()
 
+# Test with comment filter
+df = db.get_summary(comment='%test%')
+print(f"\nFiltered by comment: {len(df)} rows")
+print(df.head())
+print()
+
 # Test custom SQL
 sql = """
     SELECT DISTINCT timestamp, username, hostname, agent_host
