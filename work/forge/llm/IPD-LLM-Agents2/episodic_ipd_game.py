@@ -399,6 +399,8 @@ def main():
                        help="HTTP request timeout in seconds (default: 60)")
     parser.add_argument("--force-retries", type=int, default=2,
                        help="Retries for ambiguous decisions (default: 2)")
+    parser.add_argument("--comment", type=str, default=None,
+                       help="Optional comment/note about this job run")
     
     args = parser.parse_args()
     
@@ -471,6 +473,10 @@ def main():
         reflection_template_text=reflection_template
     )
     results = game.play_game()
+    
+    # Inject comment into results metadata if provided
+    if args.comment:
+        results = {'comment': args.comment, **results}
     
     # Save results
     if args.output:

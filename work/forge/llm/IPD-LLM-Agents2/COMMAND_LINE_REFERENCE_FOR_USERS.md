@@ -173,6 +173,12 @@ Reduce console output (results still saved)
 python episodic_ipd_game.py --quiet
 ```
 
+**--comment TEXT**  
+Attach a free-text note to this job run; stored as `comment` at the top of the JSON output
+```bash
+python episodic_ipd_game.py --comment "Baseline run with moral framing, tungsten node"
+```
+
 ---
 
 ## Common Usage Patterns
@@ -501,6 +507,7 @@ python episodic_ipd_game.py \
 # OUTPUT
 --output FILE             Result JSON path
 --quiet                   Reduce console output
+--comment TEXT            Free-text note stored in JSON output
 ```
 
 ---
