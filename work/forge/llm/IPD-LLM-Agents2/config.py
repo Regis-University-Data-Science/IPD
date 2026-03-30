@@ -27,7 +27,7 @@ class EpisodeConfig:
     # host_1: str = "iron"
     host_0: str = os.environ.get('OLLAMA_HOST_0', 'tungsten')
     host_1: str = os.environ.get('OLLAMA_HOST_1', 'tungsten')
-    # End containerized architecture changes @edc, 3/30/2026
+    # End Containerized Architecture changes @edc, 3/30/2026
 
     model_0: str = "llama3:8b-instruct-q5_K_M"
     model_1: str = "llama3:8b-instruct-q5_K_M"
