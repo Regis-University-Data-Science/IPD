@@ -20,10 +20,11 @@ class OllamaAgent:
 
         # Begin Containerized Architecture changes, set default to tungsten per DH
         # host: str = "iron",
+        # port: int = 11434,
         host: str = os.environ.get('OLLAMA_HOST', 'tungsten'),
+        port: int = int(os.environ.get('OLLAMA_PORT', '11434')),
         # End containerized architecture changes @edc, 3/30/2026
 
-        port: int = 11434,
         temperature: float = 0.7,
         system_prompt: str = "",
         decision_token_limit: int = 256,
