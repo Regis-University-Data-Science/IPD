@@ -11,5 +11,8 @@ env | grep -E '^(FORGE_|OLLAMA_)' >> /app/.bashrc
 # Set user's permissions on the research code
 chown -R "$FORGE_USER":"$FORGE_USER" /app
 
+# Fix ownership on mounted results directory
+chown -R "$FORGE_USER":"$FORGE_USER" /app/results 2>/dev/null
+
 # Open login shell as the user
 exec su "$FORGE_USER"
