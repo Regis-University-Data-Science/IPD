@@ -6,6 +6,7 @@
 # Usage:    ./k3s_start_cluster.sh
 
 echo "=== Starting FORGE containers ==="
+kubectl apply -f forge-db-storage.yml
 kubectl apply -f forge-db.yml
 
 # Uncomment the nodes to be run:

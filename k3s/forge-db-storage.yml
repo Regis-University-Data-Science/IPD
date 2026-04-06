@@ -1,0 +1,42 @@
+# FORGE PostgreSQL Persistent Storage
+#
+# Purpose:  Persistent storage for ForgeDB; survives pod restarts and redeployments
+# Usage:    kubectl apply -f k3s/forge-db-storage.yml
+#
+# NOTE: Apply this BEFORE forge-db.yml
+# 
+# WARNING:  Deleting this resource DESTROYS all database data
+
+---
+# PV: Define the actual storage (i.e. location on disk, size, reclaim policy, etc.)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: forge-db-pv
+spec:
+  capacity:
+    # Adjust storage size based on expected research data volume
+    storage: 5Gi
+  accessModes:
+    # ReadWriteOnce: only one node can mount this volume at a time
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /var/lib/forge/postgres
+  storageClassName: manual
+
+---
+# PVC: Requests pod to use PersistentVolume (PV) storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: forge-db-data
+spec:
+  accessModes:
+    # ReadWriteOnce: only one node can mount this volume at a time
+    - ReadWriteOnce
+  resources:
+    requests:
+      # Adjust storage size based on expected research data volume
+      storage: 5Gi
+  storageClassName: manual      

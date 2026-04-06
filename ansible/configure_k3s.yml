@@ -12,6 +12,14 @@
   become: true
 
   tasks:
+    - name: Create FORGE database data directory
+      file:
+        path: /var/lib/forge/postgres
+        state: directory
+        owner: 999    # PostgreSQL user's UID inside official PostgreSQL Docker image 
+        group: 999
+        mode: '0700'  # PostgreSQL default data directory permissions
+  
     - name: Wait for all nodes to be ready
       shell: kubectl get nodes --no-headers | grep -c "Ready"
       register: ready_count

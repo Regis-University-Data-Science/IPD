@@ -7,6 +7,7 @@
 
 echo "=== Stopping FORGE containers ==="
 kubectl delete -f forge-db.yml
+kubectl delete -f forge-db-storage.yml
 echo ""
 
 echo "Stopping Ollama containers..."
@@ -20,11 +21,11 @@ kubectl delete -f ollama-zinc.yml 2>/dev/null
 kubectl get pods
 echo "=== FORGE containers stopped ==="
 
-echo "NOTE: Database storage (forge-db-storage.yml) preserved."
-echo "      NEVER delete forge-db-storage.yml unless you want to lose all data."
+echo "NOTE: Database storage (forge-db-storage.yml) preserved at /var/lib/forge/postgres."
 
 ################################################################################
-# Following commands will allow a user to BACKUP the database, drop the container, then restore
+# Following commands will allow a user to BACKUP the database, drop the container, then restore.
+# This assumes an issue with the default storage directory at /var/lib/forge/postgres
 
 # BACKUP DATABASE
 # kubectl exec $(kubectl get pod -l app=forge-db -o name) -- su postgres -c "pg_dump forge" > forge_backup.sql
@@ -32,6 +33,8 @@ echo "      NEVER delete forge-db-storage.yml unless you want to lose all data."
 # DELETE K3s DB CONTAINERS
 # kubectl delete -f forge-db.yml
 # kubectl delete -f forge-db-storage.yml
+
+# NOTE: if needed, remove and recreate the /var/lib/forge/postgres directory
 
 # RECREATE K3s DB CONTAINERS
 # kubectl apply -f forge-db-storage.yml

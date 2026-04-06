@@ -2,6 +2,9 @@
 
 # FORGE K3s Container Deployment
 # Prerequisites: Run setup_cluster.sh first
+#
+# Additional consideration: ensure bare-metal ollama agents are stopped on target machines:
+#   ansible -K -i inventory.ini nickel,zinc,copper -m shell -a "systemctl stop ollama.service" --become
 
 echo "=== FORGE K3s Deployment ==="
 
@@ -19,7 +22,7 @@ kubectl create secret docker-registry ghcr-secret \
 echo ""
 
 echo "Creating persistent storage..."
-kubectl apply -f forge_db-storage.yml
+kubectl apply -f forge-db-storage.yml
 
 echo "Deploying ForgeDB..."
 kubectl apply -f forge-db.yml
@@ -32,7 +35,10 @@ kubectl get services
 # Deploy Ollama nodes individually as needed:
 # kubectl apply -f ollama-tungsten.yml
 # kubectl apply -f ollama-iron.yml
-# kubectl apply -f ollama-copper.yml
+kubectl apply -f ollama-copper.yml
+kubectl apply -f ollama-nickel.yml
+kubectl apply -f ollama-zinc.yml
+
 
 echo ""
 echo "=== Deployment complete ==="
