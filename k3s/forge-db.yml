@@ -6,7 +6,7 @@
 # Ref: https://kubernetes.io/docs/concepts/workloads/pods/
 
 # Persistent storage for PostgreSQL data; survives container restarts and redeployments
-# Handled separately in forge_db-storage.yml; NOTE: start that container FIRST.
+# Handled separately in forge-db-storage.yml; NOTE: start that container FIRST.
 
 ---
 # Deploys the ForgeDB container on the primary host with persistent storage
@@ -29,8 +29,8 @@ spec:
       #   --docker-server=ghcr.io \
       #   --docker-username=minion1066 \
       #   --docker-password=$(read -sp "PAT: " pat && echo $pat)      
-      imagePullSecrets:
-        - name: ghcr-secret
+      # imagePullSecrets:
+      #   - name: ghcr-secret
 
       # Set this to the primary host that persistent storage will reside on
       nodeSelector:
@@ -39,7 +39,7 @@ spec:
       # DB container built for research project and hosted on GitHub
       containers:
         - name: forge-db
-          image: ghcr.io/regis-university-data-science/forge_db:main
+          image: ghcr.io/regis-university-data-science/forge-db:main
           imagePullPolicy: Always
           
           # Required by PostgreSQL docker container (https://hub.docker.com/_/postgres)

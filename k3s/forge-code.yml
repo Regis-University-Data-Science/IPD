@@ -19,18 +19,11 @@ metadata:
     app: forge
     user: ${FORGE_USER}
 spec:
-  # User needs to create a secrets entry on their machine for use with private images
-  # kubectl create secret docker-registry ghcr-secret \
-  #   --docker-server=ghcr.io \
-  #   --docker-username=minion1066 \
-  #   --docker-password=$(read -sp "PAT: " pat && echo $pat)      
-  imagePullSecrets:
-    - name: ghcr-secret
   nodeSelector:
     kubernetes.io/hostname: platinum
   containers:
     - name: forge
-      image: ghcr.io/regis-university-data-science/forge:main
+      image: ghcr.io/regis-university-data-science/forge-code:main
       imagePullPolicy: Always
       stdin: true
       tty: true

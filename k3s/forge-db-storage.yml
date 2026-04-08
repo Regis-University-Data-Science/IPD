@@ -7,7 +7,6 @@
 # 
 # WARNING:  Deleting this resource DESTROYS all database data
 
-<<<<<<< HEAD
 ---
 # PV: Define the actual storage (i.e. location on disk, size, reclaim policy, etc.)
 apiVersion: v1
@@ -28,10 +27,6 @@ spec:
 
 ---
 # PVC: Requests pod to use PersistentVolume (PV) storage
-=======
-
----
->>>>>>> main
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -39,18 +34,9 @@ metadata:
 spec:
   accessModes:
     # ReadWriteOnce: only one node can mount this volume at a time
-<<<<<<< HEAD
-    - ReadWriteOnce
+    - ReadWriteOnce 
   resources:
     requests:
       # Adjust storage size based on expected research data volume
-      storage: 5Gi
+      storage: 5Gi # DON'T CHANGE THIS
   storageClassName: manual      
-=======
-    - ReadWriteOnce # DON'T CHANGE THIS
-
-  resources:
-    requests:
-      # Adjust storage size based on expected research data volume
-      storage: 5Gi
->>>>>>> main
