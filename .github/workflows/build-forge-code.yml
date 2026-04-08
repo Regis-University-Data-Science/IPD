@@ -16,7 +16,7 @@
 #   Be sure to verify current GitHub action versions for tags [2].
 #*******************************************************************************
 
-name: Build FORGE Database Container
+name: Build FORGE Code Docker Container
 
 # Configures this workflow to run every time a change is pushed to the GitHub branch.
 on:
@@ -28,13 +28,13 @@ on:
 # workflow builds.
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/forge_db
+  IMAGE_NAME: ${{ github.repository_owner }}/forge-code
 
 # There is a single job in this workflow. It's configured to run on the latest 
 # available version of Ubuntu.
 jobs:
   build-and-push-image:
-    name: Build and push FORGE Database container image to ghcr.io
+    name: Build and push FORGE primary code image to ghcr.io
     runs-on: ubuntu-latest
 
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
@@ -85,7 +85,7 @@ jobs:
         uses: docker/build-push-action@v7 # https://github.com/docker/build-push-action
         with:
           context: .
-          file: docker/database/Dockerfile
+          file: docker/forge-code/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
