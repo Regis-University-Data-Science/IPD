@@ -1,5 +1,5 @@
 # Ref: https://docs.docker.com/get-started/docker-concepts/building-images/writing-a-dockerfile/
-# Example build: docker build -t test-forge -f docker/forge/Dockerfile .
+# Example build: docker build -t test-forge -f docker/forge-code/Dockerfile .
 # Example to run: docker run -it -e FORGE_USER=carpenter test-forge
 
 FROM python:3.12
@@ -15,7 +15,7 @@ COPY work/forge/llm/IPD-LLM-Agents2/ .
 #EXPOSE 8080
 
 # Copy the entrypoint script and make it executable
-COPY docker/forge/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/forge-code/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # User creation and code deployment handled at runtime by entrypoint script
