@@ -1,5 +1,6 @@
+#*******************************************************************************
 # FORGE Primary Code Container Deployment
-#
+# 
 # Purpose:  Deploy the FORGE research code container for running IPD experiments
 # Usage:    ./forge-shell.sh (see forge-shell.sh for interactive use)
 #
@@ -9,6 +10,14 @@
 # the game code should clone the repo and run from a virtual environment.
 # This container provides a ready-to-run environment for those who just
 # want to execute experiments without local setup.
+#
+# Author:
+#   Emily D. Carpenter
+#   Anderson College of Business and Computing, Regis University
+#   MSDS 696/S71: Data Science Practicum II
+#   Dr. Douglas Hart, Dr. Kellen Sorauf
+#   Practicum II, February-May 2026
+#*******************************************************************************
 
 ---
 apiVersion: v1

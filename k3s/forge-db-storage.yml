@@ -1,11 +1,19 @@
+#*******************************************************************************
 # FORGE PostgreSQL Persistent Storage
-#
+# 
 # Purpose:  Persistent storage for ForgeDB; survives pod restarts and redeployments
 # Usage:    kubectl apply -f k3s/forge-db-storage.yml
 #
 # NOTE: Apply this BEFORE forge-db.yml
-# 
-# WARNING:  Deleting this resource DESTROYS all database data
+#
+# Author:
+#   Emily D. Carpenter
+#   Anderson College of Business and Computing, Regis University
+#   MSDS 696/S71: Data Science Practicum II
+#   Dr. Douglas Hart, Dr. Kellen Sorauf
+#   Practicum II, February-May 2026
+#*******************************************************************************
+
 
 ---
 # PV: Define the actual storage (i.e. location on disk, size, reclaim policy, etc.)

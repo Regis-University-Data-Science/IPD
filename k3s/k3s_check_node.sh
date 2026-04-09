@@ -3,7 +3,7 @@
 # Forge Cluster Node Status
 # 
 # Purpose: check the status of a specific node on the cluster
-# Usage:    ./k3s_check_node.sh hostname
+# Usage:    ./k3s_check_node.sh <hostname>
 #
 # Author:
 #   Emily D. Carpenter
@@ -17,7 +17,7 @@
 cd "$(dirname "$0")"
 
 if [ -z "$1" ]; then
-    echo "Usage: ./check_node.sh <hostname>"
+    echo "Usage: ./k3s_check_node.sh <hostname>"
     echo "Available: nickel zinc copper iron platinum tungsten"
     exit 1
 fi

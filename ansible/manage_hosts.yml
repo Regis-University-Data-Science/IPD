@@ -2,11 +2,13 @@
 # Manage FORGE Cluster /etc/hosts
 # 
 # Purpose: Standardize cluster hostname entries across all nodes using managed markers.
-# NOTE: This playbook manages the FORGE node membership. Ensure the machines listed
-#     below align with those listed in the inventory.ini file.
+# 
+# NOTE: This playbook manages the FORGE node membership. Variables are loaded 
+#   from the host_vars/ directory. Ensure each host in inventory.ini has a matching 
+#   host_vars file.
 # 
 # Usage: ansible-playbook -K -i ansible/inventory.ini ansible/manage_hosts.yml
-# Usage (no changes): ansible-playbook -K -i inventory.ini manage_hosts.yml --check
+# Usage (no changes): ansible-playbook -K -i ansible/inventory.ini ansible/manage_hosts.yml --check
 #
 # Ref: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/blockinfile_module.html
 #

@@ -2,7 +2,7 @@
 # FORGE Ollama Agent Deployments
 # 
 # Purpose:  Deploy Ollama LLM inference containers on GPU-capable cluster nodes
-# Usage:    kubectl apply -f k3s/ollama.yml
+# Usage:    kubectl apply -f k3s/ollama-platinum.yml
 #
 # Ref: https://hub.docker.com/r/ollama/ollama
 # Ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/

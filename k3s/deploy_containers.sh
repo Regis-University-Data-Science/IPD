@@ -2,9 +2,12 @@
 #*******************************************************************************
 # FORGE K3s Container Deployment
 # 
-# Prerequisites: Run setup_cluster.sh first
+# Purpose: Deploy Lightweight Kubernetes (K3s) pods for the research cluster.
+# 
+# Prerequisites: Run ansible/setup_cluster.sh first
 #
-# Additional consideration: ensure bare-metal ollama agents are stopped on target machines:
+# Additional consideration: ensure bare-metal ollama agents are stopped on target 
+# machines (if running):
 #   ansible -K -i inventory.ini nickel,zinc,copper -m shell -a "systemctl stop ollama.service" --become
 #
 # Author:

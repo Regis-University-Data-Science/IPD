@@ -1,6 +1,7 @@
 #*******************************************************************************
-# Install Docker Engine on all cluster nodes.
-# Purpose: required for support of NVIDIA Toolkit.
+# Install Docker Engine.
+# 
+# Purpose: Required for support of NVIDIA Toolkit.
 #
 # Usage: ansible-playbook -K -i ansible/inventory.ini ansible/install_docker.yml
 #

@@ -3,7 +3,7 @@
 # Stop Forge Lightweight Kubernetes (K3s) cluster pods
 # 
 # Purpose:  Shuts down all running K3s cluster pods
-# Usage:    ./k3s_stkop_cluster.sh
+# Usage:    ./k3s_stop_cluster.sh
 #
 # Author:
 #   Emily D. Carpenter

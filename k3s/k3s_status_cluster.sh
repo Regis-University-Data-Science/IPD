@@ -3,7 +3,7 @@
 # Forge Lightweight Kubernetes (K3s)
 # 
 # Purpose:  Allows user to check the status of the Kubernetes (k3s) cluster
-# Usage:    ./k3s_cluster_status.sh
+# Usage:    ./k3s_status_cluster.sh
 #
 # Author:
 #   Emily D. Carpenter

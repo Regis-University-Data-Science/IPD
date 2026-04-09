@@ -1,9 +1,17 @@
 #!/bin/bash
-
-# Launch a FORGE code container for the current user
-#
+#*******************************************************************************
+# FORGE K3s Container Deployment
+# 
 # Purpose:  Start an interactive FORGE pod with persistent results storage
 # Usage:    ./forge-shell.sh
+#
+# Author:
+#   Emily D. Carpenter
+#   Anderson College of Business and Computing, Regis University
+#   MSDS 696/S71: Data Science Practicum II
+#   Dr. Douglas Hart, Dr. Kellen Sorauf
+#   Practicum II, February-May 2026
+#*******************************************************************************
 
 export FORGE_USER=$(whoami)
 export FORGE_UID=$(id -u)
