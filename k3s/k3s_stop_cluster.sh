@@ -17,17 +17,17 @@
 cd "$(dirname "$0")"
 
 echo "=== Stopping FORGE containers ==="
-kubectl delete -f forge-db.yml
-kubectl delete -f forge-db-storage.yml
+kubectl delete -f manifest/forge-db.yml
+kubectl delete -f manifest/forge-db-storage.yml
 echo ""
 
 echo "Stopping Ollama containers..."
-kubectl delete -f ollama-copper.yml 2>/dev/null
-kubectl delete -f ollama-iron.yml 2>/dev/null
-kubectl delete -f ollama-nickel.yml 2>/dev/null
-kubectl delete -f ollama-platinum.yml 2>/dev/null
-kubectl delete -f ollama-tungsten.yml 2>/dev/null
-kubectl delete -f ollama-zinc.yml 2>/dev/null
+kubectl delete -f manifest/ollama-copper.yml 2>/dev/null
+kubectl delete -f manifest/ollama-iron.yml 2>/dev/null
+kubectl delete -f manifest/ollama-nickel.yml 2>/dev/null
+kubectl delete -f manifest/ollama-platinum.yml 2>/dev/null
+kubectl delete -f manifest/ollama-tungsten.yml 2>/dev/null
+kubectl delete -f manifest/ollama-zinc.yml 2>/dev/null
 
 kubectl get pods
 echo "=== FORGE containers stopped ==="
