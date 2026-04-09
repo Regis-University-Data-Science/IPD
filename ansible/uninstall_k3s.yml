@@ -1,12 +1,8 @@
 #*******************************************************************************
-# Reset FORGE K3s Cluster
+# Uninstall FORGE K3s Cluster
 # 
 # Purpose:  Cleanly uninstall K3s from all nodes for a fresh start
-# Usage:    ansible-playbook -K -i ansible/inventory.ini ansible/reset_k3s.yml
-#
-# WARNING:  This will destroy all running pods, services, and K3s configuration
-# NOTE: This is the NUCLEAR option. If the setup goes badly or things are just not
-#     responding correctly, then step back, reset, and rerun main.yml :-)
+# Usage:    ansible-playbook -K -i ansible/inventory.ini ansible/uninstall_k3s.yml
 #
 # Author:
 #   Emily D. Carpenter

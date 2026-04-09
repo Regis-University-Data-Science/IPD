@@ -1,5 +1,20 @@
 #!/bin/bash
-# Check status of a specific FORGE cluster node
+#*******************************************************************************
+# Forge Cluster Node Status
+# 
+# Purpose: check the status of a specific node on the cluster
+# Usage:    ./k3s_check_node.sh hostname
+#
+# Author:
+#   Emily D. Carpenter
+#   Anderson College of Business and Computing, Regis University
+#   MSDS 696/S71: Data Science Practicum II
+#   Dr. Douglas Hart, Dr. Kellen Sorauf
+#   Practicum II, February-May 2026
+#*******************************************************************************
+
+# Change directory to script folder
+cd "$(dirname "$0")"
 
 if [ -z "$1" ]; then
     echo "Usage: ./check_node.sh <hostname>"

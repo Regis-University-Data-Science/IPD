@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #*******************************************************************************
 # FORGE Cluster Infrastructure Setup
 # 
@@ -17,6 +16,9 @@
 #*******************************************************************************
 
 echo "=== FORGE Cluster Infrastructure Setup ==="
+
+# Change directory to script folder
+cd "$(dirname "$0")"
 
 echo "Step 1: Configuring /etc/hosts..."
 ansible-playbook -K -i inventory.ini manage_hosts.yml

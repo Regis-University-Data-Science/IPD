@@ -1,12 +1,12 @@
+#*******************************************************************************
 # FORGE Ollama Agent Deployments
-#
+# 
 # Purpose:  Deploy Ollama LLM inference containers on GPU-capable cluster nodes
 # Usage:    kubectl apply -f k3s/ollama.yml
 #
 # Ref: https://hub.docker.com/r/ollama/ollama
 # Ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
-
-# =============================================================================
+#
 # Each GPU node gets its own Ollama deployment pinned to that node.
 # Models are stored in a persistent volume mounted from the host to avoid
 # re-downloading large model files on container restarts.
@@ -17,7 +17,14 @@
 # To coexist with bare-metal Ollama (port 11434), containers use hostPort 12434.
 # If bare-metal Ollama is stopped, change hostPort to 11434 and update
 # OLLAMA_PORT in forge_k3s.env accordingly.
-# =============================================================================
+# 
+# Author:
+#   Emily D. Carpenter
+#   Anderson College of Business and Computing, Regis University
+#   MSDS 696/S71: Data Science Practicum II
+#   Dr. Douglas Hart, Dr. Kellen Sorauf
+#   Practicum II, February-May 2026
+#*******************************************************************************
 
 ---
 # Platinum has the weakest GPU (6 GB). Include only if running small models

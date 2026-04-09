@@ -20,7 +20,7 @@
 
 # Hostname: Copper
 # IP address
-host:_ip: 100.99.205.32
+host_ip: 100.99.205.32
 
 # GPU hardware configuration
 gpu_primary: titan-x-pascal

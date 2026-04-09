@@ -1,9 +1,20 @@
 #!/bin/bash
-
-# FORGE K3s Cluster Status
-#
+#*******************************************************************************
+# Forge Lightweight Kubernetes (K3s)
+# 
 # Purpose:  Allows user to check the status of the Kubernetes (k3s) cluster
 # Usage:    ./k3s_cluster_status.sh
+#
+# Author:
+#   Emily D. Carpenter
+#   Anderson College of Business and Computing, Regis University
+#   MSDS 696/S71: Data Science Practicum II
+#   Dr. Douglas Hart, Dr. Kellen Sorauf
+#   Practicum II, February-May 2026
+#*******************************************************************************
+
+# Change directory to script folder
+cd "$(dirname "$0")"
 
 echo "=== Nodes ==="
 kubectl get nodes

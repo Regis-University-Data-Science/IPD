@@ -62,6 +62,4 @@
     - name: Install NVIDIA device plugin
       command: >
         kubectl apply -f
-        https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/
-        {{ nvidia_device_plugin_version }}/deployments/static/
-        nvidia-device-plugin.yml
+        https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/{{ nvidia_device_plugin_version }}/deployments/static/nvidia-device-plugin.yml
