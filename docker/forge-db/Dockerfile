@@ -4,7 +4,7 @@
 #   docker build -t test-forge-db -f docker/forge-db/Dockerfile .
 # Example to run: 
 #   docker run -v ./data/postgres:/var/lib/postgresql/data -p 5433:5432 test-forge-db
-# Access forge_db from shell:
+# Access forge-db from shell:
 #   psql -h platinum -p 5433 -U postgres -d forge
 
 FROM postgres:16
