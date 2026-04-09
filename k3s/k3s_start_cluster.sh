@@ -35,7 +35,7 @@ kubectl apply -f manifests/ollama-copper.yml
 kubectl apply -f manifests/ollama-iron.yml
 kubectl apply -f manifests/ollama-nickel.yml
 kubectl apply -f manifests/ollama-platinum.yml
-# kubectl apply -f manifests/ollama-tungsten.yml
+kubectl apply -f manifests/ollama-tungsten.yml
 kubectl apply -f manifests/ollama-zinc.yml
 
 echo ""
