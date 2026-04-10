@@ -2,8 +2,11 @@
 #*******************************************************************************
 # FORGE Cluster Infrastructure Setup
 # 
-# Prerequisites: See main.yml header for requirements
-# Usage:    ./install_k3s_cluster.sh
+# Purpose:        Install required software to run Containerized Architecture
+#                 on a research cluster.
+#
+# Prerequisites:  See main.yml header for requirements
+# Usage:          ./install_k3s_cluster.sh
 #
 # Notes: 
 #   - The -K prompts the user for a BECOME password; this is the user's SUDO password
