@@ -3,8 +3,7 @@
 # Shutdown FORGE K3s Cluster
 #
 # Purpose:  Stop K3s services on all nodes without uninstalling.
-#           Use initialize_cluster.sh or systemctl to restart.
-# Usage:    ./shutdown_cluster.sh
+# Usage:    ./shutdown_k3s_cluster.sh
 #
 # NOTE:     This stops the K3s infrastructure, not just workloads.
 #           For stopping workloads only, use k3s/k3s_stop_cluster.sh instead.
