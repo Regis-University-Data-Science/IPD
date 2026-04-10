@@ -3,6 +3,8 @@
 # FORGE Cluster Infrastructure Setup
 # 
 # Prerequisites: See main.yml header for requirements
+# Usage:    ./install_k3s_cluster.sh
+#
 # Notes: 
 #   - The -K prompts the user for a BECOME password; this is the user's SUDO password
 #   - Add a --check flag to the command to execute WITHOUT making changes
