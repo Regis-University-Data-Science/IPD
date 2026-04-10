@@ -4,6 +4,8 @@
 # Purpose:  Cleanly uninstall K3s from all nodes for a fresh start
 # Usage:    ansible-playbook -K -i ansible/inventory.ini ansible/uninstall_k3s.yml
 #
+# NOTE:     Ensure SSH keys are loaded prior to execution (ssh-add)
+#
 # Author:
 #   Emily D. Carpenter
 #   Anderson College of Business and Computing, Regis University

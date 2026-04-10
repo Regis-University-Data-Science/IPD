@@ -1,0 +1,39 @@
+#*******************************************************************************
+# Uninstall NVIDIA Container Toolkit
+#
+# Purpose:  Remove NVIDIA Container Toolkit from all cluster nodes.
+# Usage:    ansible-playbook -K -i ansible/inventory.ini ansible/uninstall_nvidia_toolkit.yml
+#
+# Author:
+#   Emily D. Carpenter
+#   Anderson College of Business and Computing, Regis University
+#   MSDS 696/S71: Data Science Practicum II
+#   Dr. Douglas Hart, Dr. Kellen Sorauf
+#   Practicum II, February-May 2026
+#*******************************************************************************
+
+---
+- name: Uninstall NVIDIA Container Toolkit
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Remove NVIDIA Container Toolkit packages
+      apt:
+        name:
+          - nvidia-container-toolkit
+        state: absent
+
+    - name: Remove NVIDIA container toolkit repository
+      file:
+        path: /etc/apt/sources.list.d/nvidia-container-toolkit.list
+        state: absent
+
+    - name: Remove NVIDIA repository keyring
+      file:
+        path: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+        state: absent
+
+    - name: Update apt cache
+      apt:
+        update_cache: true

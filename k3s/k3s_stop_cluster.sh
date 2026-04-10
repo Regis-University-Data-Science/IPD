@@ -16,20 +16,17 @@
 # Change directory to script folder
 cd "$(dirname "$0")"
 
-echo "=== Stopping FORGE containers ==="
-kubectl delete -f manifests/forge-db.yml
-kubectl delete -f manifests/forge-db-storage.yml
+echo "=== Stopping FORGE Deployments, Services, and Pods ==="
+kubectl delete deployments,services,pods --all
+
+echo "=== Stopping FORGE Storage Resources ==="
+kubectl delete pvc --all
+kubectl delete pv --all
 echo ""
 
-echo "Stopping Ollama containers..."
-kubectl delete -f manifests/ollama-copper.yml 2>/dev/null
-kubectl delete -f manifests/ollama-iron.yml 2>/dev/null
-kubectl delete -f manifests/ollama-nickel.yml 2>/dev/null
-kubectl delete -f manifests/ollama-platinum.yml 2>/dev/null
-kubectl delete -f manifests/ollama-tungsten.yml 2>/dev/null
-kubectl delete -f manifests/ollama-zinc.yml 2>/dev/null
-
+echo "=== Checking Status ==="
 kubectl get pods
+kubectl get services
 echo "=== FORGE containers stopped ==="
 
 echo "NOTE: PostgreSQL data is preserved/retained at /var/lib/forge/postgres."

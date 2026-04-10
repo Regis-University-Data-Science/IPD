@@ -6,6 +6,7 @@
 # Notes: 
 #   - The -K prompts the user for a BECOME password; this is the user's SUDO password
 #   - Add a --check flag to the command to execute WITHOUT making changes
+#     *** Ensure SSH keys are loaded prior to execution (ssh-add) ***
 #
 # Author:
 #   Emily D. Carpenter

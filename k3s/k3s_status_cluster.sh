@@ -16,11 +16,17 @@
 # Change directory to script folder
 cd "$(dirname "$0")"
 
+echo ""
+echo "Cluster status..."
 echo "=== Nodes ==="
 kubectl get nodes
+echo ""
+echo "=== Deployments ==="
+kubectl get deployments
 echo ""
 echo "=== Pods ==="
 kubectl get pods
 echo ""
 echo "=== Services ==="
 kubectl get services
+echo ""

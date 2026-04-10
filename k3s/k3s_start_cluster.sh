@@ -3,7 +3,7 @@
 # Start FORGE Lightweight Kubernetes (K3s) Cluster Pods
 # 
 # Purpose:  Deploy and start K3s pods for the research cluster.
-# Usage:    ./k3s/k3s_start_cluster.sh
+# Usage:    ./k3s_start_cluster.sh
 #
 # Prerequisites: Run ansible/setup_cluster.sh first
 #
@@ -31,6 +31,7 @@ echo "Deploying ForgeDB..."
 kubectl apply -f manifests/forge-db.yml
 
 # Uncomment the nodes to be run:
+echo "Deploying Ollama Agents..."
 kubectl apply -f manifests/ollama-copper.yml
 kubectl apply -f manifests/ollama-iron.yml
 kubectl apply -f manifests/ollama-nickel.yml
@@ -39,8 +40,20 @@ kubectl apply -f manifests/ollama-tungsten.yml
 kubectl apply -f manifests/ollama-zinc.yml
 
 echo ""
+echo "Cluster status..."
+echo "=== Nodes ==="
+kubectl get nodes
+echo ""
+echo "=== Deployments ==="
+kubectl get deployments
+echo ""
+echo "=== Pods ==="
 kubectl get pods
+echo ""
+echo "=== Services ==="
 kubectl get services
+echo ""
+
 echo "=== FORGE containers started ==="
 
 echo ""
