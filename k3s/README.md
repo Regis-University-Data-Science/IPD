@@ -145,6 +145,10 @@ Important notes:
 * Code changes made inside the container are not preserved. For development work, clone the repository and use a Python virtual environment instead.
 * To reconnect to an existing session: `kubectl exec -it forge-<username> -- su <username>`
 * To remove the pod: `kubectl delete pod forge-<username>`
+* When running inside forge-shell, Ollama hostnames use the K3s service name rather than the bare-metal hostname (i.e. ollama-tungsten, ollama-iron, etc.). Example:
+```bash
+  python episodic_ipd_game.py --host-0 ollama-tungsten --host-1 ollama-tungsten --episodes 5 --rounds 10 --temperature 0.2
+```
 
 When running experiments against the containerized infrastructure from bare-metal (outside the FORGE container), the research code must be configured to use the containerized service ports. 
 
