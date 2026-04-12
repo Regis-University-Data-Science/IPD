@@ -5,5 +5,4 @@
 
 # Include only what the container needs
 !work/forge/llm/IPD-LLM-Agents2/
-!requirements.txt
 !docker/

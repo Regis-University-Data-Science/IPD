@@ -15,7 +15,6 @@ The platform supports two deployment modes: **bare-metal** (direct execution on 
 * **Primary GENESIS research project code:**
    * `work/forge/llm/` - Contains files, documentation, and scripts for managing the Regis University Compute Cluster.
    * `work/forge/llm/IPD-LLM-Agents2/` - Contains files, code, and documentation for conducting experiments to support the research project.
-   * `requirements.txt` - Identifies packages for use in a Python virtual environment for running research code.
 * **Containerized Architecture:** The following files and folders are intended for use when conducting research experiments on a cluster outside of the Regis University Data Science Compute Cluster. Start in the `ansible/` directory for instructions on how to configure the project on your own cluster.
    * `ansible/` - Installation and configuration of compute cluster.
    * `docker/` - Contains configuration for Docker images used in containerized (portable) architecture. Images are hosted on GitHub in ghcr.io.

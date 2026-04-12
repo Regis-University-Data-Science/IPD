@@ -10,7 +10,7 @@ FROM python:3.12
 WORKDIR /app
 
 # Install the application dependencies (i.e. Python Libraries)
-COPY requirements.txt ./
+COPY docker/forge-code/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy source code from the repo to the Docker Image Working Directory

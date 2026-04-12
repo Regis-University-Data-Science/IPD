@@ -197,6 +197,8 @@ This removes all deployments, services, pods, and storage resources. PostgreSQL 
 ### Version 1.0 (April 2026)
 * Initial release of K3s cluster management documentation.
 * Author:
-   * Emily D. Carpenter, Anderson College of Business and Computing, Regis University
+   * Emily D. Carpenter
+   * Marketing & Data Sciences, Anderson College of Business and Computing
+   * Regis University, Denver, CO, USA
    * Project: GENESIS - General Emergent Norms, Ethics, and Societies in Silico
    * Advisors: Dr. Douglas Hart, Dr. Kellen Sorauf
