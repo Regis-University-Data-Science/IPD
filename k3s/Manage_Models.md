@@ -8,6 +8,8 @@ Ollama models must be installed on each GPU node before experiments can be run. 
 
 Each section provides commands for both containerized Ollama agents (port `12434`) and natively installed bare-metal agents (port `11434`). Adjust the port number if your configuration differs.
 
+The default path for pulling down models is the same for the Containerized Architecture and Natively installed Ollama agents: `/usr/share/ollama/.ollama`.  
+
 ---
 
 ## List Installed Models
@@ -66,7 +68,7 @@ Note: The Ollama API returns HTTP 200 even if a model name is not found in the r
 
 ---
 
-## Removing Models
+## Remove Models
 
 **Containerized Ollama Agents:**
 
